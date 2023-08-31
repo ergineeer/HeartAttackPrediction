@@ -30,8 +30,10 @@ opts.DataLines = dataLines;
 opts.Delimiter = ",";
 
 % Specify column names and types
-opts.VariableNames = ["Age", "Sex", "ChestPainType", "RestingBloodPressure", "Cholesterol", "FastingBloodSugar", "RestingEC", "Thalach", "ExerciseInducedAngina", "STDepression", "SlopePeakExSTSeg", "NumberMajorVessels", "Thalassemia", "Output"];
-opts.VariableTypes = ["double", "double", "categorical", "double", "double", "categorical", "categorical", "double", "categorical", "double", "categorical", "categorical", "categorical", "categorical"];
+opts.VariableNames = ["Age", "Sex", "ChestPainType", "RestingBloodPressure", "Cholesterol", "FastingBloodSugar", "RestingEC", ...
+"Thalach", "ExerciseInducedAngina", "STDepression", "SlopePeakExSTSeg", "NumberMajorVessels", "Thalassemia", "Output"];
+opts.VariableTypes = ["double", "double", "categorical", "double", "double", "categorical", "categorical", "double", "categorical", ...
+"double", "categorical", "categorical", "categorical", "categorical"];
 
 % Specify file level properties
 opts.ExtraColumnsRule = "ignore";
