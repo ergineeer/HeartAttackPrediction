@@ -50,3 +50,30 @@ for i = 1:width(heartData)
         heartData.(i) = double(heartData.(i));
     end
 end
+
+%% Correlation Analysis
+heartDataArray = table2array(heartData);
+corrCoefMatrix = corrcoef(heartDataArray);
+outputCorrelationVector = abs(corrCoefMatrix(:,width(corrCoefMatrix)));
+[featImpCorelation, idx] = sortrows(outputCorrelationVector,"descend");
+
+featImpLabelsbyCorrelation = string(heartData.Properties.VariableNames(idx))';
+featImpLabelsbyCorrelation(1) = []; % Remove "Output" Column
+featImpCorelation(1) = []; % Remove "Output" Column
+
+% Visualize Results
+% 1. Corelation Matrix Visualization
+figure; hold on
+imagesc(corrCoefMatrix)
+colormap("Pink")
+axis off
+hold off
+
+% 2. Output Corelation Array
+figure; hold on
+title("Correlation")
+plot(featImpCorelation)
+xticks(1:length(featImpCorelation));
+tickLabels = featImpLabelsbyCorrelation;
+xticklabels(tickLabels);
+grid on
