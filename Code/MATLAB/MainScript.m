@@ -100,3 +100,19 @@ for i = 1:size(heartData_Predictors,2)
     fprintf('%s: %f\n', heartData.Properties.VariableNames{ii}, featImpTreeBagger(i));
     featImpLabelsbyTreeBagger(i,1) = heartData.Properties.VariableNames{ii}; 
 end
+
+%% Feature Analysis by Cross-Tabulation
+pValues = zeros(length(heartData.Properties.VariableNames)-1,1);
+fprintf('\nFeature importance:\n');
+for i=1:width(heartData)
+    varName = heartData.Properties.VariableNames{i};
+    [~, ~, pVal] = crosstab(heartDataIntact.output, heartDataIntact.(varName));
+    fprintf("%s - %.4f\n", varName, pVal)
+    pValues(i,1) = pVal;
+end
+featImpLabelsbypVals = string(heartData.Properties.VariableNames)';
+[featImp_pValuesOrdered,idx] = sortrows(pValues,"ascend");
+featImpLabelsbypVals = featImpLabelsbypVals(idx,:);
+ 
+featImp_pValuesOrdered(1) = []; % Remove "Output" Column
+featImpLabelsbypVals(1) = []; 
