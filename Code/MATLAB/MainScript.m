@@ -77,3 +77,26 @@ xticks(1:length(featImpCorelation));
 tickLabels = featImpLabelsbyCorrelation;
 xticklabels(tickLabels);
 grid on
+
+%% Feature Analysis by TreeBagger
+heartData_Response = heartData.output;
+heartData_Predictors = removevars(heartData, 'output');
+heartData_Predictors = table2array(heartData_Predictors);
+
+nTrees = 100;
+rf = TreeBagger(nTrees, ...
+    heartData_Predictors, heartData_Response, ... 
+    'Method', 'classification', ...
+    'OOBPrediction', 'on', ...
+    'OOBPredictorImportance','on');
+
+% Feature importance
+importance = rf.OOBPermutedVarDeltaError;
+[featImpTreeBagger,idx] = sortrows(importance',"descend");
+fprintf('\nFeature importance:\n');
+featImpLabelsbyTreeBagger = strings(length(featImpTreeBagger),1);
+for i = 1:size(heartData_Predictors,2)
+    ii = idx(i);
+    fprintf('%s: %f\n', heartData.Properties.VariableNames{ii}, featImpTreeBagger(i));
+    featImpLabelsbyTreeBagger(i,1) = heartData.Properties.VariableNames{ii}; 
+end
