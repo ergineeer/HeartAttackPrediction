@@ -1,3 +1,10 @@
+% % % % % 
+% Heart Attack Prediction Study
+% Exploratory Data Analysis, Feature Engineering, Binary Classification
+% Ensemble Algorithm - Gentle Adaptive Boosting
+% 18/10/2024
+% 
+
 % Housekeeping
 cd(fileparts(matlab.desktop.editor.getActiveFilename))
 clear
