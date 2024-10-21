@@ -2,7 +2,7 @@
 % Heart Attack Prediction Study
 % Exploratory Data Analysis, Feature Engineering, Binary Classification
 % Ensemble Algorithm - Gentle Adaptive Boosting
-% 18/10/2024
+% 21/10/2024
 % 
 
 % Housekeeping
@@ -207,4 +207,11 @@ partitionedModel = crossval(trainedClassifier.ClassificationEnsemble, 'KFold', 5
 % Compute validation accuracy
 validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError') % Validation Accuracy: 78.1893%
 
+
+%% Test the Classifier
+yTest = heartDataTest.output;
+predictedLabels = trainedClassifier.predictFcn(heartDataTest);
+
+testAccuracy = sum(predictedLabels == yTest) / numel(yTest);
+fprintf('Accuracy: %.2f%%\n', testAccuracy * 100); % Test Accuracy: 83.3333%
 
