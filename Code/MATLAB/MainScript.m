@@ -165,3 +165,46 @@ heartDataTestIdx = test(heartDataPartitions);
 heartDataTest = heartDataIntact(heartDataTestIdx,:)
 
 
+%% Train the Classifier
+predictorNames = {'age', 'cp', 'trtbps', 'chol', 'fbs', 'restecg', 'thalachh', 'exng', 'oldpeak', 'slp', 'caa', 'thall', 'CholToAge', 'AgeToMaxRate', 'MaxRateToResting', 'MajorVesselsToRestingBP', 'MajorVesselsToMaxRate', 'STDepressionToMaxRate'};
+predictors = heartDataTraining(:, predictorNames);
+response = heartDataTraining.output;
+
+% Train a classifier
+template = templateTree(...
+    'MaxNumSplits', 168, ...
+    'NumVariablesToSample', 'all');
+classificationEnsemble = fitcensemble(...
+    predictors, ...
+    response, ...
+    'Method', 'GentleBoost', ...
+    'NumLearningCycles', 21, ...
+    'Learners', template, ...
+    'LearnRate', 0.1887283195334965, ...
+    'ClassNames', categorical({'0'; '1'}));
+
+% Create the result struct with predict function
+predictorExtractionFcn = @(t) t(:, predictorNames);
+ensemblePredictFcn = @(x) predict(classificationEnsemble, x);
+trainedClassifier.predictFcn = @(x) ensemblePredictFcn(predictorExtractionFcn(x));
+
+% Add additional fields to the result struct
+trainedClassifier.RequiredVariables = {'AgeToMaxRate', 'CholToAge', 'MajorVesselsToMaxRate', 'MajorVesselsToRestingBP', 'MaxRateToResting', 'STDepressionToMaxRate', 'age', 'caa', 'chol', 'cp', 'exng', 'fbs', 'oldpeak', 'restecg', 'slp', 'thalachh', 'thall', 'trtbps'};
+trainedClassifier.ClassificationEnsemble = classificationEnsemble;
+
+% Extract predictors and response
+predictorNames = {'age', 'cp', 'trtbps', 'chol', 'fbs', 'restecg', 'thalachh', 'exng', 'oldpeak', 'slp', 'caa', 'thall', 'CholToAge', 'AgeToMaxRate', 'MaxRateToResting', 'MajorVesselsToRestingBP', 'MajorVesselsToMaxRate', 'STDepressionToMaxRate'};
+predictors = heartDataTraining(:, predictorNames);
+response = heartDataTraining.output;
+isCategoricalPredictor = [false, true, false, false, true, true, false, true, false, true, true, true, false, false, false, false, false, false];
+
+% Perform cross-validation
+partitionedModel = crossval(trainedClassifier.ClassificationEnsemble, 'KFold', 5)
+
+% Compute validation predictions
+[validationPredictions, validationScores] = kfoldPredict(partitionedModel)
+
+% Compute validation accuracy
+validationAccuracy = 1 - kfoldLoss(partitionedModel, 'LossFun', 'ClassifError') % Validation Accuracy: 78.1893%
+
+
